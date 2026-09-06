@@ -13,7 +13,7 @@
     "@vantix/broker-adapters": "workspace:*",
     "@nestjs/common": "^10.4.0",
     "@nestjs/core": "^10.4.0",
-    "@nestjs/platform-fastify": "^10.4.0",
+    "@nestjs/platform-fastify": "^11.1.24",
     "@nestjs/websockets": "^10.4.0",
     "@nestjs/platform-ws": "^10.4.0",
     "@nestjs/microservices": "^10.4.0",
