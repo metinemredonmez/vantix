@@ -1,0 +1,1 @@
+{ "type": "send_to_broker", "ems_order_id": "11111111-1111-1111-1111-111111111111:0", "tenant_id": "demo", "account_id": "acc1", "broker_id": "mock", "symbol": "GARAN", "side": "BUY", "qty": "1000", "price": "125", "native_type": "LIMIT", "tif": "DAY" }

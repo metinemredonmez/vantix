@@ -1,0 +1,1 @@
+{ "type": "risk_violation", "order_id": "11111111-1111-1111-1111-111111111111", "leg": 0, "rule": "MAX_QTY", "detail": "1000 > 500" }

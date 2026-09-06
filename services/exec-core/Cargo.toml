@@ -1,0 +1,26 @@
+[package]
+name = "exec-core"
+version = "0.1.0"
+edition = "2021"
+description = "Vantix Execution Core — deterministic order orchestration engine"
+
+[lib]
+path = "src/lib.rs"
+
+[[bin]]
+name = "exec-core"
+path = "src/main.rs"
+
+[dependencies]
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "signal", "sync"] }
+async-nats = "0.36"
+futures = "0.3"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+uuid = { version = "1", features = ["v4", "serde"] }
+rust_decimal = { version = "1", features = ["serde"] }
+rust_decimal_macros = "1"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+thiserror = "1"
+anyhow = "1"

@@ -1,0 +1,21 @@
+{
+  "name": "@vantix/broker-gateway",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "description": "Mock broker gateway — exec.broker.send tüketir, ack/fill/cancelled yayınlar (NATS).",
+  "scripts": {
+    "start": "node --import tsx src/main.ts",
+    "smoke": "node smoke.mjs",
+    "test": "node --import tsx --test src/match.test.ts"
+  },
+  "dependencies": {
+    "@vantix/shared": "workspace:*",
+    "nats": "^2.28.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.6.0"
+  }
+}

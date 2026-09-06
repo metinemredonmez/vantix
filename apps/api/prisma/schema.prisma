@@ -1,0 +1,93 @@
+// Vantix API kalıcılık şeması (Postgres). Para/miktar = Decimal (float DEĞİL).
+// order_event append-only audit; exec-core JetStream replay ile state kurar, bu DB okuma/blotter içindir.
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Tenant {
+  id        String    @id
+  name      String
+  createdAt DateTime  @default(now())
+  accounts  Account[]
+  orders    OrderTree[]
+  users     User[]
+}
+
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String
+  tenantId     String
+  role         String   @default("trader") // trader | desk | admin
+  createdAt    DateTime @default(now())
+  tenant       Tenant   @relation(fields: [tenantId], references: [id])
+
+  @@index([tenantId])
+}
+
+model Account {
+  id        String   @id
+  tenantId  String
+  name      String   @default("")
+  createdAt DateTime @default(now())
+  tenant    Tenant   @relation(fields: [tenantId], references: [id])
+  orders    OrderTree[]
+
+  @@index([tenantId])
+}
+
+model OrderTree {
+  id        String     @id // EMS tree uuid
+  tenantId  String
+  accountId String
+  brokerId  String
+  clientRef String?
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  tenant    Tenant     @relation(fields: [tenantId], references: [id])
+  account   Account    @relation(fields: [accountId], references: [id])
+  legs      OrderLeg[]
+
+  @@index([tenantId, accountId])
+  @@index([createdAt])
+}
+
+model OrderLeg {
+  treeId       String
+  idx          Int
+  symbol       String
+  side         String
+  qty          Decimal  @db.Decimal(38, 10)
+  price        Decimal? @db.Decimal(38, 10)
+  nativeType   String
+  tif          String
+  status       String   @default("DRAFT")
+  filled       Decimal  @default(0) @db.Decimal(38, 10)
+  brokerOrderId String?
+  reason       String?
+  updatedAt    DateTime @updatedAt
+  tree         OrderTree @relation(fields: [treeId], references: [id])
+
+  @@id([treeId, idx])
+  @@index([status])
+  @@index([symbol])
+}
+
+// Append-only audit: exec-core'dan gelen her olay. UPDATE/DELETE yok.
+model OrderEvent {
+  seq          BigInt   @id @default(autoincrement())
+  ts           DateTime @default(now())
+  orderId      String?
+  leg          Int?
+  kind         String
+  payload      Json
+  createdAtIdx DateTime @default(now())
+
+  @@index([orderId, seq])
+  @@index([kind])
+}

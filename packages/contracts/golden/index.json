@@ -1,0 +1,107 @@
+{
+  "description": "Golden payload fixtures — üç dilin (serde/zod/pydantic) üzerinde anlaştığı kanonik örnekler. Her dosya 'def' ile şemadaki $def'e, 'subject' ile NATS subject'ine bağlanır. direction=in exec-core'un okuduğu, out yaydığı payload.",
+  "samples": [
+    {
+      "file": "in/order_tree.json",
+      "def": "OrderTree",
+      "subject": "exec.order.submit",
+      "direction": "in"
+    },
+    {
+      "file": "in/cancel_request.json",
+      "def": "CancelRequest",
+      "subject": "exec.order.cancel",
+      "direction": "in"
+    },
+    {
+      "file": "in/modify.json",
+      "def": "ModifyRequest",
+      "subject": "exec.order.modify",
+      "direction": "in"
+    },
+    {
+      "file": "in/kill.json",
+      "def": "KillRequest",
+      "subject": "exec.control.kill",
+      "direction": "in"
+    },
+    {
+      "file": "in/reconcile.json",
+      "def": "ReconcileRequest",
+      "subject": "exec.control.reconcile",
+      "direction": "in"
+    },
+    {
+      "file": "in/broker_ack.json",
+      "def": "BrokerAck",
+      "subject": "exec.broker.ack",
+      "direction": "in"
+    },
+    {
+      "file": "in/broker_reject.json",
+      "def": "BrokerReject",
+      "subject": "exec.broker.reject",
+      "direction": "in"
+    },
+    {
+      "file": "in/broker_cancelled.json",
+      "def": "BrokerCancelled",
+      "subject": "exec.broker.cancelled",
+      "direction": "in"
+    },
+    {
+      "file": "in/fill.json",
+      "def": "Fill",
+      "subject": "exec.broker.fill",
+      "direction": "in"
+    },
+    {
+      "file": "in/tick.json",
+      "def": "Tick",
+      "subject": "md.tick.GARAN",
+      "direction": "in"
+    },
+    {
+      "file": "out/state_changed.json",
+      "def": "StateChanged",
+      "subject": "exec.order.state",
+      "direction": "out"
+    },
+    {
+      "file": "out/send_to_broker.json",
+      "def": "SendToBroker",
+      "subject": "exec.broker.send",
+      "direction": "out"
+    },
+    {
+      "file": "out/cancel_at_broker.json",
+      "def": "CancelAtBroker",
+      "subject": "exec.broker.cancel",
+      "direction": "out"
+    },
+    {
+      "file": "out/modify_at_broker.json",
+      "def": "ModifyAtBroker",
+      "subject": "exec.broker.modify",
+      "direction": "out"
+    },
+    {
+      "file": "out/risk_violation.json",
+      "def": "RiskViolation",
+      "subject": "exec.risk.violation",
+      "direction": "out"
+    },
+    {
+      "file": "out/rejected.json",
+      "def": "Rejected",
+      "subject": "exec.order.rejected",
+      "direction": "out"
+    },
+    {
+      "file": "out/reconcile_mismatch.json",
+      "def": "ReconcileMismatch",
+      "subject": "exec.reconcile.mismatch",
+      "direction": "out"
+    }
+  ]
+}

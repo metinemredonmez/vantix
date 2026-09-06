@@ -1,0 +1,16 @@
+{
+  "id": "11111111-1111-1111-1111-111111111111",
+  "tenant_id": "demo",
+  "account_id": "acc1",
+  "broker_id": "mock",
+  "legs": [
+    { "symbol": "GARAN", "side": "BUY",  "qty": "1000", "price": "125" },
+    { "symbol": "GARAN", "side": "SELL", "qty": "1000", "price": "130" },
+    { "symbol": "GARAN", "side": "SELL", "qty": "1000", "native_type": "MARKET", "trigger_price": "121" }
+  ],
+  "tree": [
+    { "parent": 0, "child": 1, "on": "FILLED" },
+    { "parent": 0, "child": 2, "on": "FILLED" }
+  ],
+  "oco_groups": [[1, 2]]
+}

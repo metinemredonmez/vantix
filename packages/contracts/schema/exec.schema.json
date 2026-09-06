@@ -1,0 +1,331 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://vantix.dev/contracts/exec.schema.json",
+  "title": "Vantix Execution Core wire contract",
+  "description": "TEK KAYNAK. exec-core'un NATS üzerinde okuyup yaydığı payload'lar. zod/serde/pydantic buradan üretilir (bkz. ../codegen). Değerler: para/miktar = Decimal string; enum casing serde ile birebir; alan adları snake_case (wire ile aynı).",
+  "$defs": {
+    "Decimal": {
+      "description": "Para/miktar. Float DEĞİL — JSON string. Rust rust_decimal, TS string, Python Decimal.",
+      "type": "string",
+      "pattern": "^-?[0-9]+(\\.[0-9]+)?$"
+    },
+    "Uuid": { "type": "string", "format": "uuid" },
+    "Side": { "type": "string", "enum": ["BUY", "SELL"] },
+    "NativeType": { "type": "string", "enum": ["LIMIT", "MARKET", "MARKET_TO_LIMIT"] },
+    "TimeInForce": { "type": "string", "enum": ["DAY", "IOC", "FOK", "GTD"] },
+    "TriggerOn": { "type": "string", "enum": ["FILLED", "PARTIAL"] },
+    "CondField": { "type": "string", "enum": ["LAST", "BID", "ASK"] },
+    "CondOp": { "type": "string", "enum": [">", ">=", "<", "<="] },
+    "Status": {
+      "type": "string",
+      "enum": [
+        "DRAFT", "PENDING_TRIGGER", "PENDING_RISK", "SENDING", "WORKING",
+        "PARTIALLY_FILLED", "FILLED", "CANCELLING", "CANCELLED", "REJECTED",
+        "EXPIRED", "ERROR"
+      ]
+    },
+
+    "Condition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["symbol", "field", "op", "value"],
+      "properties": {
+        "symbol": { "type": "string" },
+        "field": { "$ref": "#/$defs/CondField" },
+        "op": { "$ref": "#/$defs/CondOp" },
+        "value": { "$ref": "#/$defs/Decimal" }
+      }
+    },
+
+    "Leg": {
+      "description": "Borsaya gidebilecek en küçük birim. trigger_price/trail_*/condition doluysa önce PENDING_TRIGGER'da bekler.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["symbol", "side", "qty"],
+      "properties": {
+        "symbol": { "type": "string" },
+        "side": { "$ref": "#/$defs/Side" },
+        "qty": { "$ref": "#/$defs/Decimal" },
+        "price": { "anyOf": [{ "$ref": "#/$defs/Decimal" }, { "type": "null" }] },
+        "native_type": { "allOf": [{ "$ref": "#/$defs/NativeType" }], "default": "LIMIT" },
+        "tif": { "allOf": [{ "$ref": "#/$defs/TimeInForce" }], "default": "DAY" },
+        "trigger_price": { "anyOf": [{ "$ref": "#/$defs/Decimal" }, { "type": "null" }] },
+        "trail_amount": { "anyOf": [{ "$ref": "#/$defs/Decimal" }, { "type": "null" }] },
+        "trail_percent": { "anyOf": [{ "$ref": "#/$defs/Decimal" }, { "type": "null" }] },
+        "condition": { "anyOf": [{ "$ref": "#/$defs/Condition" }, { "type": "null" }] },
+        "expire_at_ms": { "anyOf": [{ "type": "integer" }, { "type": "null" }], "description": "GTD son geçerlilik (epoch ms)" }
+      }
+    },
+
+    "Edge": {
+      "description": "parent → child bağı. Child, parent 'on' durumuna gelince aktive olur.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["parent", "child", "on"],
+      "properties": {
+        "parent": { "type": "integer", "minimum": 0 },
+        "child": { "type": "integer", "minimum": 0 },
+        "on": { "$ref": "#/$defs/TriggerOn" }
+      }
+    },
+
+    "OrderTree": {
+      "description": "exec.order.submit payload'ı. Bracket/Chain/OCO/OTO/scale-out hepsi bu modelle.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tenant_id", "account_id", "broker_id", "legs"],
+      "properties": {
+        "id": { "$ref": "#/$defs/Uuid", "description": "Verilmezse exec-core üretir." },
+        "tenant_id": { "type": "string" },
+        "account_id": { "type": "string" },
+        "broker_id": { "type": "string" },
+        "legs": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/Leg" } },
+        "tree": { "type": "array", "items": { "$ref": "#/$defs/Edge" }, "default": [] },
+        "oco_groups": {
+          "type": "array",
+          "items": { "type": "array", "items": { "type": "integer", "minimum": 0 } },
+          "default": []
+        },
+        "client_ref": { "anyOf": [{ "type": "string" }, { "type": "null" }] }
+      }
+    },
+
+    "CancelRequest": {
+      "description": "exec.order.cancel payload'ı.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["order_id"],
+      "properties": {
+        "order_id": { "$ref": "#/$defs/Uuid" },
+        "leg": { "anyOf": [{ "type": "integer", "minimum": 0 }, { "type": "null" }] }
+      }
+    },
+
+    "BrokerAck": {
+      "description": "exec.broker.ack payload'ı.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ems_order_id", "broker_order_id"],
+      "properties": {
+        "ems_order_id": { "type": "string" },
+        "broker_order_id": { "type": "string" }
+      }
+    },
+
+    "BrokerReject": {
+      "description": "exec.broker.reject payload'ı.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ems_order_id", "reason"],
+      "properties": {
+        "ems_order_id": { "type": "string" },
+        "reason": { "type": "string" }
+      }
+    },
+
+    "BrokerCancelled": {
+      "description": "exec.broker.cancelled payload'ı.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ems_order_id"],
+      "properties": { "ems_order_id": { "type": "string" } }
+    },
+
+    "ReconcileRequest": {
+      "description": "exec.control.reconcile payload'ı. Gateway'in açık gördüğü broker order id'leri.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["open_broker_ids"],
+      "properties": {
+        "open_broker_ids": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+
+    "ModifyRequest": {
+      "description": "exec.order.modify payload'ı (amend). Verilen alan değişir.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["order_id", "leg"],
+      "properties": {
+        "order_id": { "$ref": "#/$defs/Uuid" },
+        "leg": { "type": "integer", "minimum": 0 },
+        "price": { "anyOf": [{ "$ref": "#/$defs/Decimal" }, { "type": "null" }] },
+        "qty": { "anyOf": [{ "$ref": "#/$defs/Decimal" }, { "type": "null" }] }
+      }
+    },
+
+    "KillRequest": {
+      "description": "exec.control.kill payload'ı (acil durdurma). tenant_id/account_id yoksa joker (hepsi).",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["active"],
+      "properties": {
+        "tenant_id": { "anyOf": [{ "type": "string" }, { "type": "null" }] },
+        "account_id": { "anyOf": [{ "type": "string" }, { "type": "null" }] },
+        "active": { "type": "boolean" }
+      }
+    },
+
+    "Fill": {
+      "description": "exec.broker.fill payload'ı.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ems_order_id", "broker_order_id", "qty", "price", "remaining", "ts_ms"],
+      "properties": {
+        "ems_order_id": { "type": "string" },
+        "broker_order_id": { "type": "string" },
+        "qty": { "$ref": "#/$defs/Decimal" },
+        "price": { "$ref": "#/$defs/Decimal" },
+        "remaining": { "$ref": "#/$defs/Decimal" },
+        "ts_ms": { "type": "integer" }
+      }
+    },
+
+    "Tick": {
+      "description": "md.tick.<SYMBOL> payload'ı.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["symbol", "last", "ts_ms"],
+      "properties": {
+        "symbol": { "type": "string" },
+        "last": { "$ref": "#/$defs/Decimal" },
+        "bid": { "anyOf": [{ "$ref": "#/$defs/Decimal" }, { "type": "null" }] },
+        "ask": { "anyOf": [{ "$ref": "#/$defs/Decimal" }, { "type": "null" }] },
+        "ts_ms": { "type": "integer" }
+      }
+    },
+
+    "NativeOrder": {
+      "description": "Broker gateway'e giden native emir (exec.broker.send içeriği).",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ems_order_id", "tenant_id", "account_id", "broker_id", "symbol", "side", "qty", "native_type", "tif"],
+      "properties": {
+        "ems_order_id": { "type": "string", "description": "<tree_id>:<leg_index>" },
+        "tenant_id": { "type": "string" },
+        "account_id": { "type": "string" },
+        "broker_id": { "type": "string" },
+        "symbol": { "type": "string" },
+        "side": { "$ref": "#/$defs/Side" },
+        "qty": { "$ref": "#/$defs/Decimal" },
+        "price": { "anyOf": [{ "$ref": "#/$defs/Decimal" }, { "type": "null" }] },
+        "native_type": { "$ref": "#/$defs/NativeType" },
+        "tif": { "$ref": "#/$defs/TimeInForce" }
+      }
+    },
+
+    "StateChanged": {
+      "description": "exec.order.state — internally-tagged Event.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "order_id", "leg", "from", "to", "reason"],
+      "properties": {
+        "type": { "const": "state_changed" },
+        "order_id": { "$ref": "#/$defs/Uuid" },
+        "leg": { "type": "integer", "minimum": 0 },
+        "from": { "$ref": "#/$defs/Status" },
+        "to": { "$ref": "#/$defs/Status" },
+        "reason": { "anyOf": [{ "type": "string" }, { "type": "null" }] }
+      }
+    },
+
+    "SendToBroker": {
+      "description": "exec.broker.send — NativeOrder alanları + type tag.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "ems_order_id", "tenant_id", "account_id", "broker_id", "symbol", "side", "qty", "native_type", "tif"],
+      "properties": {
+        "type": { "const": "send_to_broker" },
+        "ems_order_id": { "type": "string" },
+        "tenant_id": { "type": "string" },
+        "account_id": { "type": "string" },
+        "broker_id": { "type": "string" },
+        "symbol": { "type": "string" },
+        "side": { "$ref": "#/$defs/Side" },
+        "qty": { "$ref": "#/$defs/Decimal" },
+        "price": { "anyOf": [{ "$ref": "#/$defs/Decimal" }, { "type": "null" }] },
+        "native_type": { "$ref": "#/$defs/NativeType" },
+        "tif": { "$ref": "#/$defs/TimeInForce" }
+      }
+    },
+
+    "CancelAtBroker": {
+      "description": "exec.broker.cancel — internally-tagged Event.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "ems_order_id", "broker_order_id"],
+      "properties": {
+        "type": { "const": "cancel_at_broker" },
+        "ems_order_id": { "type": "string" },
+        "broker_order_id": { "type": "string" }
+      }
+    },
+
+    "ModifyAtBroker": {
+      "description": "exec.broker.modify — internally-tagged Event.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "ems_order_id", "broker_order_id"],
+      "properties": {
+        "type": { "const": "modify_at_broker" },
+        "ems_order_id": { "type": "string" },
+        "broker_order_id": { "type": "string" },
+        "price": { "anyOf": [{ "$ref": "#/$defs/Decimal" }, { "type": "null" }] },
+        "qty": { "anyOf": [{ "$ref": "#/$defs/Decimal" }, { "type": "null" }] }
+      }
+    },
+
+    "RiskViolation": {
+      "description": "exec.risk.violation — internally-tagged Event.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "order_id", "leg", "rule", "detail"],
+      "properties": {
+        "type": { "const": "risk_violation" },
+        "order_id": { "$ref": "#/$defs/Uuid" },
+        "leg": { "type": "integer", "minimum": 0 },
+        "rule": { "type": "string" },
+        "detail": { "type": "string" }
+      }
+    },
+
+    "ReconcileMismatch": {
+      "description": "exec.reconcile.mismatch — internally-tagged Event.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "broker_order_id", "kind"],
+      "properties": {
+        "type": { "const": "reconcile_mismatch" },
+        "ems_order_id": { "anyOf": [{ "type": "string" }, { "type": "null" }] },
+        "broker_order_id": { "type": "string" },
+        "kind": { "type": "string" }
+      }
+    },
+
+    "Rejected": {
+      "description": "exec.order.rejected — internally-tagged Event.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "order_id", "reason"],
+      "properties": {
+        "type": { "const": "rejected" },
+        "order_id": { "$ref": "#/$defs/Uuid" },
+        "reason": { "type": "string" }
+      }
+    },
+
+    "Event": {
+      "description": "exec-core'dan çıkan tüm olaylar (discriminator: type).",
+      "oneOf": [
+        { "$ref": "#/$defs/StateChanged" },
+        { "$ref": "#/$defs/SendToBroker" },
+        { "$ref": "#/$defs/CancelAtBroker" },
+        { "$ref": "#/$defs/ModifyAtBroker" },
+        { "$ref": "#/$defs/RiskViolation" },
+        { "$ref": "#/$defs/Rejected" },
+        { "$ref": "#/$defs/ReconcileMismatch" }
+      ],
+      "discriminator": { "propertyName": "type" }
+    }
+  }
+}

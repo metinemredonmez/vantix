@@ -1,0 +1,18 @@
+{
+  "name": "vantix",
+  "private": true,
+  "packageManager": "pnpm@9.12.0",
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "test": "turbo run test",
+    "infra:up": "docker compose -f infra/docker-compose.yml up -d",
+    "infra:down": "docker compose -f infra/docker-compose.yml down"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.2",
+    "turbo": "^2.3.0",
+    "typescript": "^5.6.0"
+  }
+}
