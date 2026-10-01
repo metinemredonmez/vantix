@@ -1,0 +1,570 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1"><style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found]){display:none!important}</style></head><body>
+<title>Vantix Web & Mobil</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+  :root{
+    --stage:#06090d; --bg:#0a0e14; --panel:#111823; --panel-2:#0e141d; --raised:#16202c;
+    --line:#1e2833; --line-soft:#182029; --ink:#e6edf3; --muted:#8b98a5; --faint:#5c6773;
+    --accent:#2dd4bf; --accent-dim:#12332f; --up:#26a69a; --up-soft:#0e2b28; --down:#ef5350; --down-soft:#33191a;
+    --warn:#e0a53b; --blue:#57b6ff; --mono:"IBM Plex Mono",ui-monospace,monospace;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--stage);color:var(--ink);font-family:"IBM Plex Sans",system-ui,sans-serif;font-size:13px}
+  .mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+  .up{color:var(--up)} .down{color:var(--down)}
+  button{font-family:inherit;cursor:pointer;color:var(--ink);background:var(--raised);border:1px solid var(--line);border-radius:6px}
+  input,select{font-family:var(--mono);background:var(--panel-2);border:1px solid var(--line);color:var(--ink);border-radius:6px;padding:6px 8px;width:100%;font-size:12px}
+  .page{max-width:1460px;margin:0 auto;padding:24px 20px 60px}
+  .head{margin-bottom:20px}
+  .eyebrow{font:600 11px/1 var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--accent);margin-bottom:9px}
+  h1{font-family:"Sora",sans-serif;font-weight:700;font-size:26px;margin:0;letter-spacing:-.02em}
+  .sub{color:var(--muted);margin-top:7px;max-width:74ch;font-size:13px}
+  .stage{display:flex;gap:26px;align-items:flex-start;overflow-x:auto;padding-bottom:14px}
+  .frame-label{font:600 11px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin:0 0 10px 4px}
+
+  /* browser */
+  .desktop{flex:0 0 auto;width:1000px}
+  .browser{background:var(--bg);border:1px solid var(--line);border-radius:12px;overflow:hidden;box-shadow:0 22px 64px rgba(0,0,0,.55)}
+  .bbar{display:flex;align-items:center;gap:10px;padding:8px 12px;background:#0c1119;border-bottom:1px solid var(--line)}
+  .tl{display:flex;gap:6px}.tl i{width:11px;height:11px;border-radius:50%}
+  .tl .r{background:#ff5f57}.tl .y{background:#febc2e}.tl .g{background:#28c840}
+  .url{flex:1;background:var(--panel-2);border:1px solid var(--line);border-radius:6px;padding:5px 10px;color:var(--muted);font:500 12px/1 var(--mono);display:flex;align-items:center;gap:7px}
+  .url .lock{color:var(--up)}
+
+  .ws{display:grid;grid-template-rows:auto auto 1fr auto}
+  /* ticker */
+  .ticker{display:flex;gap:0;background:var(--panel-2);border-bottom:1px solid var(--line);overflow:hidden}
+  .tk{display:flex;align-items:center;gap:7px;padding:6px 14px;border-right:1px solid var(--line-soft);white-space:nowrap;font-size:12px}
+  .tk .n{color:var(--muted)}.tk .v{font:600 12px/1 var(--mono)}.tk .c{font:600 11px/1 var(--mono)}
+  /* header */
+  .whead{display:flex;align-items:center;gap:14px;padding:9px 14px;background:var(--panel);border-bottom:1px solid var(--line)}
+  .brand{font-family:"Sora",sans-serif;font-weight:700;font-size:15px}.brand span{color:var(--accent)}
+  .tag{font:600 9px/1 var(--mono);color:var(--faint);border:1px solid var(--line);padding:3px 6px;border-radius:5px;text-transform:uppercase;letter-spacing:.08em}
+  .hsym{font-family:"Sora",sans-serif;font-weight:700;font-size:16px;margin-left:6px}
+  .hpx{font:600 15px/1 var(--mono)}.hchg{font:600 11px/1 var(--mono);background:var(--up-soft);color:var(--up);padding:3px 7px;border-radius:5px}
+  .sp{flex:1}
+  .acct{display:flex;gap:16px;align-items:center;padding-right:6px;border-right:1px solid var(--line);margin-right:4px}
+  .acct .i{display:flex;flex-direction:column;gap:2px}.acct .k{font:600 9px/1 var(--mono);color:var(--faint);text-transform:uppercase;letter-spacing:.05em}
+  .acct .val{font:600 13px/1 var(--mono)}
+  .conn{color:var(--muted);font-size:11px;display:flex;align-items:center;gap:6px}
+  .dot{width:7px;height:7px;border-radius:50%;background:var(--up);box-shadow:0 0 0 3px var(--up-soft)}
+  .kill{background:var(--down-soft);border-color:#4a2422;color:#ff8a86;font-weight:600;padding:7px 12px;font-size:12px}
+
+  .wsmain{display:grid;grid-template-columns:200px 1fr 288px;min-height:0;height:600px}
+  .wcol{min-height:0;display:flex;flex-direction:column;overflow:hidden}
+  .wcol.l{border-right:1px solid var(--line);background:var(--panel-2)}
+  .wcol.r{border-left:1px solid var(--line);background:var(--panel-2)}
+  .wcenter{min-width:0;display:grid;grid-template-rows:auto 1fr 176px}
+  .ph{padding:7px 12px;font:600 10px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--faint);border-bottom:1px solid var(--line-soft);display:flex;align-items:center;gap:8px}
+  .ph .r{margin-left:auto;display:flex;gap:4px;align-items:center}
+
+  /* watchlist */
+  .wsearch{padding:7px 10px;border-bottom:1px solid var(--line-soft)}
+  .wsearch input{padding:6px 8px}
+  .wl{overflow-y:auto}
+  .wlhead{display:grid;grid-template-columns:1fr auto auto;gap:10px;padding:5px 12px;font:600 9px/1 var(--mono);color:var(--faint);text-transform:uppercase;border-bottom:1px solid var(--line-soft)}
+  .wlr{display:grid;grid-template-columns:1fr auto auto;gap:2px 10px;padding:7px 12px;border-bottom:1px solid var(--line-soft);cursor:pointer;align-items:center}
+  .wlr:hover{background:var(--raised)}.wlr.on{background:var(--accent-dim);box-shadow:inset 2px 0 0 var(--accent)}
+  .wlr .s{font-weight:600;font-size:12px}.wlr .n{grid-row:2;grid-column:1;color:var(--faint);font-size:10px}
+  .wlr .p{font:600 12px/1 var(--mono);text-align:right}.wlr .v{grid-row:2;grid-column:2/4;font:500 9px/1 var(--mono);color:var(--faint);text-align:right}
+  .wlr .c{font:600 11px/1 var(--mono);text-align:right;padding:2px 5px;border-radius:4px}
+
+  /* chart */
+  .ctool{display:flex;align-items:center;gap:6px;padding:6px 10px;border-bottom:1px solid var(--line-soft);background:var(--panel-2)}
+  .ctool .g{display:flex;gap:2px}
+  .ctool button{padding:4px 8px;font:600 10px/1 var(--mono);background:transparent;border-color:transparent;color:var(--muted)}
+  .ctool button.on{background:var(--raised);color:var(--ink);border-color:var(--line)}
+  .ctool .ind{color:var(--faint);border:1px solid var(--line-soft);background:transparent}
+  .ctool .ind.on{color:var(--accent);border-color:var(--accent-dim);background:var(--accent-dim)}
+  .ctool .divx{width:1px;height:16px;background:var(--line)}
+  .chart-area{position:relative;min-height:0}
+  #dchart{position:absolute;inset:0}
+  .legend{position:absolute;top:8px;left:12px;display:flex;gap:12px;font:600 11px/1 var(--mono);background:rgba(10,14,20,.6);padding:6px 10px;border-radius:7px;border:1px solid var(--line-soft);z-index:2}
+  .legend span{color:var(--faint)} .legend b{color:var(--ink);font-weight:600;margin-left:4px}
+
+  /* blotter */
+  .blot{border-top:1px solid var(--line);display:flex;flex-direction:column;min-height:0;background:var(--panel-2)}
+  .tabs{display:flex;gap:2px;padding:5px 8px 0;border-bottom:1px solid var(--line-soft)}
+  .tabs button{padding:6px 11px;font-size:11px;font-weight:600;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--muted);border-radius:0}
+  .tabs button.on{color:var(--ink);border-bottom-color:var(--accent)}
+  .tabs .badge{font:600 9px/1 var(--mono);background:var(--raised);color:var(--muted);padding:2px 5px;border-radius:100px;margin-left:5px}
+  .tsc{overflow:auto;min-height:0}
+  table{width:100%;border-collapse:collapse;font-size:11px}
+  th{position:sticky;top:0;background:var(--panel);text-align:left;padding:6px 10px;color:var(--faint);font:600 9.5px/1 var(--mono);letter-spacing:.04em;text-transform:uppercase;border-bottom:1px solid var(--line)}
+  td{padding:6px 10px;border-bottom:1px solid var(--line-soft)}
+  td.num{font-family:var(--mono);text-align:right}
+  tr.child td:first-child{padding-left:22px;position:relative}
+  tr.child td:first-child::before{content:"└";position:absolute;left:10px;color:var(--faint)}
+  tr:hover td{background:var(--panel)}
+  .pill{font:600 9.5px/1.5 var(--mono);padding:2px 6px;border-radius:100px}
+  .pill.filled{background:var(--up-soft);color:var(--up)}.pill.working{background:#12283a;color:var(--blue)}
+  .pill.pending{background:#2c2410;color:var(--warn)}.pill.cancelled{background:#241a1a;color:#c77}.pill.partial{background:#132b2a;color:var(--accent)}
+  .sb{color:var(--up);font-weight:600}.ss{color:var(--down);font-weight:600}
+  .barcell{position:relative}.barcell i{position:absolute;left:0;top:0;height:100%;background:var(--up-soft);opacity:.5;z-index:0}.barcell span{position:relative}
+
+  /* ticket */
+  .tk2{padding:10px;border-bottom:1px solid var(--line);overflow-y:auto}
+  .seg{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:8px}
+  .seg button{padding:8px;font-weight:700;font-size:12px}
+  .seg .buy.on{background:var(--up);color:#04120f;border-color:var(--up)}.seg .buy{background:var(--up-soft);border-color:#1c4842;color:var(--up)}
+  .seg .sell.on{background:var(--down);color:#1a0605;border-color:var(--down)}.seg .sell{background:var(--down-soft);border-color:#4a2422;color:var(--down)}
+  .modes{display:flex;gap:2px;margin-bottom:8px}
+  .modes button{flex:1;padding:5px;font:600 10px/1 var(--mono);background:transparent;border-color:transparent;color:var(--muted)}
+  .modes button.on{background:var(--raised);color:var(--ink);border-color:var(--line)}
+  .fld{margin-bottom:7px}.fld label{display:block;color:var(--muted);font-size:10px;margin-bottom:3px}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+  .stepper{display:flex;gap:4px;margin-bottom:7px}.stepper button{flex:1;padding:4px;font:600 10px/1 var(--mono);color:var(--muted)}
+  .adv{border-top:1px dashed var(--line);margin-top:5px;padding-top:8px}.adv.hidden{display:none}
+  .submit{width:100%;padding:10px;font-weight:700;font-size:13px;border:none;margin-top:6px}
+  .submit.buy{background:var(--up);color:#04120f}.submit.sell{background:var(--down);color:#1a0605}
+  .est{display:flex;justify-content:space-between;color:var(--muted);font-size:10px;margin-top:6px}.est b{color:var(--ink);font-family:var(--mono)}
+  .est.ok b{color:var(--up)}
+  .dom{flex:1;overflow:auto;min-height:0}
+  .dr{display:grid;grid-template-columns:1fr 66px 1fr;align-items:center;font:600 11px/1 var(--mono);border-bottom:1px solid var(--line-soft);height:19px;cursor:pointer}
+  .dr:hover{background:var(--raised)}.dr .px{text-align:center}
+  .bar{height:15px;position:relative;display:flex;align-items:center}.bar.a{justify-content:flex-start}.bar.b{justify-content:flex-end}
+  .bar i{position:absolute;top:0;height:100%;opacity:.22}.bar.a i{left:0;background:var(--down)}.bar.b i{right:0;background:var(--up)}
+  .bar span{position:relative;color:var(--muted);padding:0 6px;font-size:10px}
+  .dmid{display:flex;justify-content:space-between;padding:4px 8px;font:700 11px/1 var(--mono);color:var(--accent);background:var(--panel);border-block:1px solid var(--line)}
+  .dmid span{color:var(--faint);font-weight:500}
+  /* status bar */
+  .statb{display:flex;align-items:center;gap:16px;padding:6px 14px;background:var(--panel);border-top:1px solid var(--line);font:500 11px/1 var(--mono);color:var(--muted)}
+  .statb b{color:var(--ink)} .statb .g{color:var(--up)}
+
+  /* phone (basit) */
+  .mobile{flex:0 0 auto;width:330px}
+  .phone{width:330px;height:668px;background:#05080c;border:10px solid #05080c;border-radius:42px;box-shadow:0 22px 64px rgba(0,0,0,.55),inset 0 0 0 1px #1c242e;overflow:hidden;position:relative}
+  .notch{position:absolute;top:0;left:50%;transform:translateX(-50%);width:120px;height:24px;background:#05080c;border-radius:0 0 16px 16px;z-index:5}
+  .screen{height:100%;background:var(--bg);border-radius:32px;overflow:hidden;display:grid;grid-template-rows:auto auto 1fr auto}
+  .statusbar{display:flex;justify-content:space-between;padding:9px 20px 4px;font:600 11px/1 var(--mono);color:var(--muted)}
+  .mhead{padding:6px 16px 10px;display:flex;align-items:center;gap:8px}
+  .mhead .b{font-family:"Sora",sans-serif;font-weight:700;font-size:16px}.mhead .b span{color:var(--accent)}
+  .mhead .k{margin-left:auto;font:600 10px/1 var(--mono);background:var(--down-soft);color:#ff8a86;border:1px solid #4a2422;padding:5px 8px;border-radius:6px}
+  .mtabs{display:flex;gap:6px;padding:0 16px 8px}
+  .mtabs button{flex:1;padding:7px;font:600 11px/1 var(--mono);color:var(--muted);background:var(--panel-2);border:1px solid var(--line)}
+  .mtabs button.on{background:var(--accent-dim);color:var(--accent);border-color:transparent}
+  .mbody{overflow-y:auto;padding:0 16px}
+  .pv{background:linear-gradient(160deg,var(--panel),var(--panel-2));border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:10px}
+  .pv .lbl{color:var(--muted);font-size:11px}.pv .val{font:700 26px/1.1 var(--mono);margin:4px 0}.pv .d{font:600 12px/1 var(--mono);color:var(--up)}
+  #mchart{height:92px;margin:4px -4px 0}
+  .sec{font:600 10px/1 var(--mono);letter-spacing:.09em;text-transform:uppercase;color:var(--faint);margin:14px 2px 8px}
+  .hold{display:grid;grid-template-columns:1fr auto auto;gap:2px 10px;align-items:center;padding:10px 12px;background:var(--panel-2);border:1px solid var(--line);border-radius:11px;margin-bottom:8px}
+  .hold .s{font-weight:600}.hold .n{grid-row:2;color:var(--faint);font-size:10px}
+  .hold .p{font:600 13px/1 var(--mono);text-align:right}.hold .pnl{grid-row:2;font:600 11px/1 var(--mono);text-align:right}
+  .hold .act{grid-row:1/3;grid-column:3}
+  .sltp{font:600 10px/1 var(--mono);background:var(--accent-dim);color:var(--accent);border:none;padding:8px 9px;border-radius:8px}
+  .sheet{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px;margin:6px 0 12px}
+  .sheet .t{font:600 12px/1 "Sora";margin-bottom:10px;display:flex;align-items:center;gap:8px}
+  .sheet .t .badge{font:600 9px/1 var(--mono);background:var(--up-soft);color:var(--up);padding:3px 6px;border-radius:5px}
+  .mseg{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px}
+  .mseg button{padding:9px;font-weight:700;font-size:12px}
+  .mseg .buy.on{background:var(--up);color:#04120f;border-color:var(--up)}.mseg .buy{background:var(--up-soft);color:var(--up);border-color:#1c4842}
+  .mseg .sell.on{background:var(--down);color:#1a0605;border-color:var(--down)}.mseg .sell{background:var(--down-soft);color:var(--down);border-color:#4a2422}
+  .msub{width:100%;padding:11px;border:none;font-weight:700;font-size:13px;background:var(--up);color:#04120f;margin-top:6px}
+  .tabbar{display:flex;justify-content:space-around;padding:9px 8px 14px;border-top:1px solid var(--line);background:var(--panel)}
+  .tabbar div{display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--faint);font:600 9px/1 var(--mono)}
+  .tabbar div.on{color:var(--accent)}.tabbar .ic{font-size:16px}
+  #toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(20px);opacity:0;background:var(--raised);border:1px solid var(--line);border-left:3px solid var(--accent);padding:11px 16px;border-radius:8px;box-shadow:0 8px 30px rgba(0,0,0,.5);transition:.25s;pointer-events:none;z-index:30;font-size:13px}
+  #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  /* fund copilot */
+  .fgrid{display:grid;grid-template-columns:250px 1fr 300px;min-height:0;height:600px}
+  .rpf{display:flex;gap:6px;padding:10px}
+  .rpf button{flex:1;padding:8px;font:600 11px/1 var(--mono);color:var(--muted)}
+  .rpf button.on{background:var(--accent-dim);color:var(--accent);border-color:transparent}
+  .wbar{height:5px;background:var(--raised);border-radius:3px;overflow:hidden;margin-top:3px}.wbar i{display:block;height:100%;background:var(--accent)}
+  .alloc{display:flex;gap:16px;padding:14px;align-items:center;border-bottom:1px solid var(--line)}
+  .alegend{flex:1;display:flex;flex-direction:column;gap:2px}
+  .alegend div{display:grid;grid-template-columns:11px 1fr auto;gap:9px;align-items:center;font-size:12px}
+  .alegend .sw{width:11px;height:11px;border-radius:3px}.alegend .pc{font:600 12px/1 var(--mono)}
+  .tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:12px}
+  .tile{background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+  .tile .k{font:600 9px/1 var(--mono);color:var(--faint);text-transform:uppercase;letter-spacing:.05em}
+  .tile .v{font:700 18px/1.1 var(--mono);margin-top:7px}
+  .ltbar{display:flex;height:10px;border-radius:5px;overflow:hidden;margin:2px 12px 8px}
+  .ltbar i{height:100%}
+  .ltleg{display:flex;flex-wrap:wrap;gap:12px;padding:0 12px 10px;font-size:11px;color:var(--muted)}
+  .ltleg .sw{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:5px}
+  .flag{display:flex;align-items:center;gap:8px;padding:6px 12px;font-size:12px;color:var(--muted)}
+  .flag b{color:var(--up)}
+  .why{margin:10px;padding:13px;background:linear-gradient(160deg,var(--accent-dim),var(--panel-2));border:1px solid #17453f;border-radius:12px}
+  .why .h{font:600 12px/1 "Sora";color:var(--accent);margin-bottom:9px;display:flex;gap:8px;align-items:center}
+  .why p{margin:0;color:var(--ink);font-size:12.5px;line-height:1.6}
+  .why .note{color:var(--faint);font-size:10.5px;margin-top:9px;border-top:1px solid #17453f;padding-top:8px}
+  .stress{padding:6px 12px 12px}.stress .r{display:flex;justify-content:space-between;padding:5px 0;font-size:12px;border-bottom:1px solid var(--line-soft)}
+</style>
+
+<div class="page">
+  <div class="head">
+    <div class="eyebrow">Vantix · Trade modülü · demo tasarım</div>
+    <h1>Web &amp; Mobil — tek platform, aynı çekirdek</h1>
+    <p class="sub">Aynı exec-core motoru (Rust), NATS, hesap. Web = profesyonel trade terminali; Mobil = takip + hızlı SL/TP. Grafik: TradingView. (statik demo)</p>
+  </div>
+
+  <div class="stage">
+    <!-- ============ WEB ============ -->
+    <div class="desktop">
+      <div class="frame-label">🖥 Web — Trade Terminali</div>
+      <div class="browser">
+        <div class="bbar"><div class="tl"><i class="r"></i><i class="y"></i><i class="g"></i></div>
+          <div class="url"><span class="lock">🔒</span> app.vantix.co/trade/GARAN</div></div>
+        <div class="ws">
+          <div class="ticker" id="ticker"></div>
+          <div class="whead">
+            <div class="brand">Van<span>tix</span></div><span class="tag">EMS</span>
+            <span class="hsym" id="hSym">GARAN</span><span class="hpx" id="hPx">125,30</span><span class="hchg" id="hChg">+1,24%</span>
+            <div class="sp"></div>
+            <div class="acct">
+              <div class="i"><span class="k">Bakiye</span><span class="val">₺1.284.500</span></div>
+              <div class="i"><span class="k">Alım Gücü</span><span class="val">₺642.000</span></div>
+              <div class="i"><span class="k">Açık P/K</span><span class="val up">+₺4.180</span></div>
+            </div>
+            <div class="conn"><span class="dot"></span>bağlı · 3ms</div>
+            <button class="kill" onclick="toast('⛔ ACİL DURDUR — canlı emirler iptal edildi (demo)')">ACİL DURDUR</button>
+          </div>
+
+          <div class="wsmain">
+            <!-- watchlist -->
+            <div class="wcol l">
+              <div class="wsearch"><input placeholder="Sembol ara…"></div>
+              <div class="wlhead"><span>Sembol</span><span>Son</span><span>%</span></div>
+              <div class="wl" id="wl"></div>
+            </div>
+
+            <!-- center -->
+            <div class="wcenter">
+              <div class="ctool">
+                <div class="g" id="tf"><button class="on">1G</button><button>1H</button><button>1A</button><button>1Y</button></div>
+                <div class="divx"></div>
+                <div class="g"><button class="on">🕯 Mum</button><button>📈 Çizgi</button></div>
+                <div class="divx"></div>
+                <div class="g"><button class="ind on">MA20</button><button class="ind">VWAP</button><button class="ind">RSI</button><button class="ind">Bollinger</button></div>
+                <div class="sp" style="flex:1"></div>
+                <div class="g"><button class="ind">⚙</button><button class="ind">⛶</button></div>
+              </div>
+              <div class="chart-area">
+                <div class="legend" id="legend"></div>
+                <div id="dchart"></div>
+              </div>
+              <div class="blot">
+                <div class="tabs">
+                  <button class="on" data-tab="orders">Emirler<span class="badge">5</span></button>
+                  <button data-tab="positions">Pozisyonlar<span class="badge">4</span></button>
+                  <button data-tab="fills">İşlemler</button>
+                  <button data-tab="risk">Risk</button>
+                </div>
+                <div class="tsc" id="blotter"></div>
+              </div>
+            </div>
+
+            <!-- right -->
+            <div class="wcol r">
+              <div class="tk2">
+                <div class="ph" style="padding:0 0 8px;border:none">Emir Bileti</div>
+                <div class="seg"><button class="buy on" id="sB" onclick="setSide('BUY')">AL</button><button class="sell" id="sS" onclick="setSide('SELL')">SAT</button></div>
+                <div class="modes" id="modes"><button class="on" data-mode="simple">Basit</button><button data-mode="advanced">Gelişmiş</button><button data-mode="bracket">Bracket</button></div>
+                <div class="fld"><label>Emir Tipi</label><select id="otype"><option>LIMIT</option><option>MARKET</option><option>MARKET_TO_LIMIT</option><option>STOP</option><option>TRAILING STOP</option></select></div>
+                <div class="row2">
+                  <div class="fld"><label>Miktar (lot)</label><input id="qty" value="1000"></div>
+                  <div class="fld"><label>Fiyat</label><input id="price" value="125,30"></div>
+                </div>
+                <div class="stepper"><button onclick="setQty(0.25)">%25</button><button onclick="setQty(0.5)">%50</button><button onclick="setQty(0.75)">%75</button><button onclick="setQty(1)">Maks</button></div>
+                <div class="fld"><label>Geçerlilik (TIF)</label><select id="tif"><option>DAY</option><option>IOC</option><option>FOK</option><option>GTD</option></select></div>
+                <div class="adv hidden" id="adv">
+                  <div class="row2"><div class="fld"><label>Kâr Al (TP)</label><input id="tp" value="130,00"></div><div class="fld"><label>Zarar Kes (SL)</label><input id="sl" value="121,00"></div></div>
+                  <div class="est"><span>Risk / Ödül</span><b id="rr">1 : 1.9</b></div>
+                </div>
+                <div class="est"><span>Tahmini tutar</span><b id="notional">₺125.300</b></div>
+                <div class="est ok"><span>Alım gücü sonrası</span><b>₺516.700 ✓</b></div>
+                <button class="submit buy" id="submit" onclick="toast('✓ Emir exec-core\'a gönderildi (demo)')">AL · GARAN 1000 @ 125,30</button>
+              </div>
+              <div class="ph">Derinlik (DOM) <span class="r" style="color:var(--faint)">kümülatif</span></div>
+              <div class="dom" id="dom"></div>
+            </div>
+          </div>
+
+          <div class="statb">
+            <span>exec-core <b class="g">bağlı</b></span><span>NATS JetStream <b class="g">↑</b></span>
+            <span>seq <b>1.204</b></span><span>gecikme <b>3ms</b></span><span>tenant <b>demo</b></span>
+            <div style="flex:1"></div><span id="clock">09:41:07</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ MOBİL (basit) ============ -->
+    <div class="mobile">
+      <div class="frame-label">📱 Mobil — Takip &amp; Hızlı SL/TP</div>
+      <div class="phone"><div class="notch"></div>
+        <div class="screen">
+          <div class="statusbar"><span>09:41</span><span>Vantix ●  5G  100%</span></div>
+          <div>
+            <div class="mhead"><div class="b">Van<span>tix</span></div><button class="k" onclick="toast('⛔ Mobil: ACİL DURDUR (demo)')">ACİL DUR</button></div>
+            <div class="mtabs"><button class="on">Portföy</button><button>Trade</button><button>Emirler</button></div>
+          </div>
+          <div class="mbody">
+            <div class="pv"><div class="lbl">Toplam portföy değeri</div><div class="val">₺248.640</div><div class="d">+₺3.180 · +1,29% bugün</div><div id="mchart"></div></div>
+            <div class="sec">Pozisyonlar</div>
+            <div class="hold"><div class="s">GARAN</div><div class="n">1.000 lot · ort 125,00</div><div class="p">125,30</div><div class="pnl up">+₺300</div><div class="act"><button class="sltp" onclick="toast('GARAN SL/TP (demo)')">SL/TP</button></div></div>
+            <div class="hold"><div class="s">THYAO</div><div class="n">2.400 lot · ort 302,10</div><div class="p">302,50</div><div class="pnl up">+₺960</div><div class="act"><button class="sltp" onclick="toast('THYAO SL/TP (demo)')">SL/TP</button></div></div>
+            <div class="hold"><div class="s">EREGL</div><div class="n">5.000 lot · ort 44,60</div><div class="p">44,12</div><div class="pnl down">−₺2.400</div><div class="act"><button class="sltp" onclick="toast('EREGL SL/TP (demo)')">SL/TP</button></div></div>
+            <div class="sec">Hızlı Koruma — THYAO</div>
+            <div class="sheet">
+              <div class="t">Bracket ekle <span class="badge">pozisyona SL/TP</span></div>
+              <div class="mseg"><button class="buy">Kâr Al</button><button class="sell on">Zarar Kes</button></div>
+              <div class="row2"><div class="fld"><label>TP fiyat</label><input value="315,00"></div><div class="fld"><label>SL fiyat</label><input value="292,00"></div></div>
+              <button class="msub" onclick="toast('✓ THYAO SL/TP exec-core\'a gönderildi (demo)')">Korumayı Gönder</button>
+            </div>
+          </div>
+          <div class="tabbar"><div class="on"><span class="ic">📊</span>Portföy</div><div><span class="ic">⚡</span>Trade</div><div><span class="ic">📋</span>Emirler</div><div><span class="ic">👤</span>Profil</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="page" style="padding-top:0">
+  <div class="frame-label">💠 Fund Copilot — Portföy (TEFAS) modülü · aynı hesap, aynı exec-core</div>
+  <div class="desktop" style="width:1000px">
+    <div class="browser">
+      <div class="bbar"><div class="tl"><i class="r"></i><i class="y"></i><i class="g"></i></div>
+        <div class="url"><span class="lock">🔒</span> app.vantix.co/portfoy</div></div>
+      <div class="ws">
+        <div class="whead">
+          <div class="brand">Van<span>tix</span></div><span class="tag">Fund Copilot</span>
+          <span class="hsym">Portföyüm</span><span class="hpx">₺248.640</span><span class="hchg">+1,29%</span>
+          <div class="sp"></div>
+          <div class="acct"><div class="i"><span class="k">Yatırılan</span><span class="val">₺230.000</span></div>
+          <div class="i"><span class="k">Getiri</span><span class="val up">+₺18.640 · %8,1</span></div></div>
+          <div class="conn"><span class="dot"></span>quant · LLM hazır</div>
+        </div>
+        <div class="fgrid">
+          <!-- fon evreni -->
+          <div class="wcol l">
+            <div class="ph">Fon Evreni <span class="r" style="color:var(--faint)">skorlu</span></div>
+            <div class="tsc" style="flex:1" id="fundList"></div>
+          </div>
+          <!-- merkez: dağılım + doctor -->
+          <div class="wcol">
+            <div class="ph">Önerilen Dağılım — HRP + CVaR</div>
+            <div class="alloc"><div id="donut"></div><div class="alegend" id="alegend"></div></div>
+            <div class="ph">Portfolio Doctor</div>
+            <div class="tiles" id="doctor"></div>
+            <div class="ph" style="border-top:1px solid var(--line-soft)">Look-through (varlık dağılımı)</div>
+            <div class="ltbar" id="ltbar"></div><div class="ltleg" id="ltleg"></div>
+            <div class="ph" style="border-top:1px solid var(--line-soft)">Stres Testi</div>
+            <div class="stress" id="stress"></div>
+          </div>
+          <!-- sağ: profil + AI neden -->
+          <div class="wcol r">
+            <div class="ph">Risk Profili</div>
+            <div class="rpf" id="rpf">
+              <button data-p="temkinli">Temkinli</button><button data-p="dengeli" class="on">Dengeli</button><button data-p="agresif">Agresif</button>
+            </div>
+            <div id="flags"></div>
+            <div class="why">
+              <div class="h">✦ Neden bu portföy? (AI açıklama)</div>
+              <p id="whyText"></p>
+              <div class="note">Kararı deterministik quant motoru verdi (HRP kümeleme + CVaR bütçe). LLM yalnız bu açıklamayı üretir — hesap yapmaz.</div>
+            </div>
+            <div style="padding:0 10px"><button class="submit buy" style="background:var(--accent);color:#04120f" onclick="toast('✓ Rebalance emirleri exec-core\'a gönderildi — fon alım/satım (demo)')">Rebalance Öner &amp; Uygula</button></div>
+          </div>
+        </div>
+        <div class="statb"><span>quant.job <b class="g">tamam</b></span><span>backtest <b>3,2s</b></span><span>evren <b>7 fon</b></span><span>CVaR bütçe <b>%8</b></span><div style="flex:1"></div><span>son güncelleme: bugün 09:30</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="toast"></div>
+
+<script>
+const SYMBOLS=[
+ {sym:"GARAN",nm:"Garanti BBVA",px:125.30,chg:1.24,vol:"48,2M"},{sym:"THYAO",nm:"Türk Hava Yolları",px:302.50,chg:-0.85,vol:"31,7M"},
+ {sym:"AKBNK",nm:"Akbank",px:62.84,chg:0.42,vol:"22,1M"},{sym:"ASELS",nm:"Aselsan",px:54.20,chg:2.10,vol:"18,9M"},
+ {sym:"SASA",nm:"Sasa Polyester",px:38.66,chg:-1.55,vol:"27,4M"},{sym:"KCHOL",nm:"Koç Holding",px:178.90,chg:0.31,vol:"9,3M"},
+ {sym:"EREGL",nm:"Ereğli Demir",px:44.12,chg:-0.22,vol:"14,6M"},{sym:"BIMAS",nm:"BİM",px:512.00,chg:1.02,vol:"6,1M"},
+ {sym:"SISE",nm:"Şişecam",px:41.30,chg:0.88,vol:"12,0M"},{sym:"FROTO",nm:"Ford Otosan",px:948.5,chg:-0.34,vol:"2,8M"}];
+const INDICES=[{n:"BIST100",v:"9.842",c:"+0,74%",u:1},{n:"BIST30",v:"10.611",c:"+0,81%",u:1},{n:"USDTRY",v:"34,18",c:"+0,12%",u:0},
+ {n:"EURTRY",v:"37,04",c:"-0,08%",u:0},{n:"XAU/USD",v:"2.632",c:"+0,45%",u:1},{n:"BTC",v:"98.240",c:"-1,2%",u:0}];
+let side="BUY",mode="simple",active="GARAN";
+const fmt=(n,d=2)=>n.toLocaleString("tr-TR",{minimumFractionDigits:d,maximumFractionDigits:d});
+function mul(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function candles(seed,base){const r=mul(seed),out=[];let px=base*0.8;
+  for(let i=0;i<120;i++){const o=px,c=o+(base-px)*0.03+(r()-0.5)*base*0.03,
+    h=Math.max(o,c)+r()*base*0.014,l=Math.min(o,c)-r()*base*0.014;px=c;
+    out.push({o:+o.toFixed(2),h:+h.toFixed(2),l:+l.toFixed(2),c:+c.toFixed(2),vol:2e6+r()*8e6});}return out;}
+function ma(d,p){return d.map((_,i)=>{if(i<p-1)return null;let s=0;for(let k=0;k<p;k++)s+=d[i-k].c;return s/p;});}
+
+// ---- SVG mum grafiği (bağımlılıksız): mum + MA20 + hacim + fiyat ekseni ----
+function svgCandles(data){
+  const W=760,H=360,padT=8,padB=6,padR=54,padL=6,volTop=H*0.78;
+  const d=data.slice(-90); const m=ma(d,20);
+  const hi=Math.max(...d.map(c=>c.h)),lo=Math.min(...d.map(c=>c.l));
+  const y=v=>padT+(volTop-padT)*(1-(v-lo)/((hi-lo)||1));
+  const vmax=Math.max(...d.map(c=>c.vol)); const vy=v=>H-padB-(H-padB-volTop-6)*(v/vmax);
+  const n=d.length,cw=(W-padR-padL)/n,bw=Math.max(1.5,cw*0.62);
+  let g="";
+  // yatay grid + fiyat etiketleri
+  for(let k=0;k<=4;k++){const v=lo+(hi-lo)*k/4,yy=y(v);
+    g+=`<line x1="${padL}" y1="${yy}" x2="${W-padR}" y2="${yy}" stroke="#161f29" stroke-width="1"/>`;
+    g+=`<text x="${W-padR+4}" y="${yy+3}" fill="#5c6773" font-size="10" font-family="IBM Plex Mono">${fmt(v)}</text>`;}
+  // hacim
+  d.forEach((c,i)=>{const x=padL+cw*i;g+=`<rect x="${x+cw*0.2}" y="${vy(c.vol)}" width="${bw}" height="${H-padB-vy(c.vol)}" fill="${c.c>=c.o?'#12352f':'#331d1e'}"/>`;});
+  // mumlar
+  d.forEach((c,i)=>{const x=padL+cw*i+cw/2,up=c.c>=c.o,col=up?'#26a69a':'#ef5350';
+    g+=`<line x1="${x}" y1="${y(c.h)}" x2="${x}" y2="${y(c.l)}" stroke="${col}" stroke-width="1"/>`;
+    const yo=y(c.o),yc=y(c.c),top=Math.min(yo,yc),hh=Math.max(1,Math.abs(yo-yc));
+    g+=`<rect x="${x-bw/2}" y="${top}" width="${bw}" height="${hh}" fill="${col}"/>`;});
+  // MA20
+  let path="";m.forEach((v,i)=>{if(v==null)return;const x=padL+cw*i+cw/2;path+=(path?"L":"M")+x.toFixed(1)+","+y(v).toFixed(1);});
+  g+=`<path d="${path}" fill="none" stroke="#e0a53b" stroke-width="1.3" opacity="0.9"/>`;
+  // son fiyat çizgisi
+  const last=d[d.length-1].c,ly=y(last);
+  g+=`<line x1="${padL}" y1="${ly}" x2="${W-padR}" y2="${ly}" stroke="#2dd4bf" stroke-width="1" stroke-dasharray="3 3" opacity="0.6"/>`;
+  g+=`<rect x="${W-padR}" y="${ly-8}" width="${padR}" height="16" fill="#2dd4bf"/><text x="${W-padR+5}" y="${ly+3}" fill="#04120f" font-size="10" font-weight="700" font-family="IBM Plex Mono">${fmt(last)}</text>`;
+  return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" style="width:100%;height:100%;display:block">${g}</svg>`;
+}
+function svgArea(data){
+  const W=300,H=92,pad=4,d=data.slice(-60);
+  const hi=Math.max(...d.map(c=>c.c)),lo=Math.min(...d.map(c=>c.c));
+  const y=v=>pad+(H-2*pad)*(1-(v-lo)/((hi-lo)||1)),x=i=>pad+(W-2*pad)*i/(d.length-1);
+  const line=d.map((c,i)=>(i?"L":"M")+x(i).toFixed(1)+","+y(c.c).toFixed(1)).join(" ");
+  return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" style="width:100%;height:100%;display:block">
+  <defs><linearGradient id="ga" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2dd4bf" stop-opacity="0.35"/><stop offset="1" stop-color="#2dd4bf" stop-opacity="0"/></linearGradient></defs>
+  <path d="${line} L${x(d.length-1)},${H-pad} L${x(0)},${H-pad} Z" fill="url(#ga)"/><path d="${line}" fill="none" stroke="#2dd4bf" stroke-width="2"/></svg>`;
+}
+function loadD(s){const info=SYMBOLS.find(x=>x.sym===s),seed=[...s].reduce((a,c)=>a+c.charCodeAt(0),0),d=candles(seed,info.px);
+  document.getElementById("dchart").innerHTML=svgCandles(d);
+  const last=d[d.length-1],prev=d[d.length-2];
+  document.getElementById("legend").innerHTML=
+   `<div><span>O</span><b>${fmt(last.o)}</b></div><div><span>Y</span><b class="up">${fmt(last.h)}</b></div><div><span>D</span><b class="down">${fmt(last.l)}</b></div><div><span>K</span><b>${fmt(last.c)}</b></div><div><span>Hac</span><b>${info.vol}</b></div><div><span style="color:#e0a53b">━ MA20</span></div>`;}
+function loadM(){document.getElementById("mchart").innerHTML=svgArea(candles(42,2486));}
+
+// ticker
+document.getElementById("ticker").innerHTML=INDICES.map(x=>`<div class="tk"><span class="n">${x.n}</span><span class="v">${x.v}</span><span class="c ${x.u?'up':'down'}">${x.c}</span></div>`).join("");
+
+// watchlist
+const wl=document.getElementById("wl");
+function renderWL(){wl.innerHTML=SYMBOLS.map(x=>`<div class="wlr ${x.sym===active?'on':''}" onclick="pick('${x.sym}')">
+  <div class="s">${x.sym}</div><div class="p">${fmt(x.px)}</div>
+  <div class="c ${x.chg>=0?'up':'down'}" style="background:${x.chg>=0?'var(--up-soft)':'var(--down-soft)'}">${x.chg>=0?'+':''}${fmt(x.chg)}%</div>
+  <div class="n">${x.nm}</div><div class="v">Hac ${x.vol}</div></div>`).join("");}
+function pick(s){active=s;const i=SYMBOLS.find(x=>x.sym===s);
+  hSym.textContent=s;hPx.textContent=fmt(i.px);
+  hChg.textContent=(i.chg>=0?'+':'')+fmt(i.chg)+'%';hChg.style.background=i.chg>=0?"var(--up-soft)":"var(--down-soft)";hChg.style.color=i.chg>=0?"var(--up)":"var(--down)";
+  price.value=fmt(i.px);renderWL();loadD(s);renderDOM();upd();}
+
+// DOM (kümülatif)
+function renderDOM(){const i=SYMBOLS.find(x=>x.sym===active),t=i.px<100?0.02:0.1,r=mul(9+i.px);let h="",cum=0,rows=[];
+  for(let k=8;k>=1;k--){const p=i.px+t*k,sz=Math.round(1e3+r()*9e3);rows.push({p,sz,ask:1});}
+  const spread=t;rows.push(null);
+  for(let k=1;k<=8;k++){const p=i.px-t*k,sz=Math.round(1e3+r()*9e3);rows.push({p,sz,ask:0});}
+  rows.forEach(row=>{if(!row){h+=`<div class="dmid">${fmt(i.px)} <span>spread ${fmt(spread)}</span></div>`;cum=0;return;}
+    cum+=row.sz;const w=Math.min(100,cum/900);
+    if(row.ask)h+=`<div class="dr" onclick="price.value='${fmt(row.p)}';upd()"><div class="bar a"><i style="width:${w}%"></i></div><div class="px down">${fmt(row.p)}</div><div class="bar a"><span>${row.sz.toLocaleString('tr-TR')}</span></div></div>`;
+    else h+=`<div class="dr" onclick="price.value='${fmt(row.p)}';upd()"><div class="bar b"><span>${row.sz.toLocaleString('tr-TR')}</span></div><div class="px up">${fmt(row.p)}</div><div class="bar b"><i style="width:${w}%"></i></div></div>`;});
+  dom.innerHTML=h;}
+
+// blotter
+const ORD=[{t:"14:22:07",s:"GARAN",d:"BUY",y:"LIMIT",q:"1.000",p:"125,00",st:"filled",f:"1.000",c:0},
+{t:"14:22:07",s:"GARAN",d:"SELL",y:"LIMIT · TP",q:"1.000",p:"130,00",st:"working",f:"0",c:1},
+{t:"14:22:07",s:"GARAN",d:"SELL",y:"STOP · SL",q:"1.000",p:"121,00",st:"pending",f:"0",c:1},
+{t:"13:58:41",s:"THYAO",d:"BUY",y:"TWAP",q:"5.000",p:"302,10",st:"partial",f:"2.400",c:0},
+{t:"11:30:12",s:"ASELS",d:"BUY",y:"MARKET",q:"800",p:"53,90",st:"filled",f:"800",c:0},
+{t:"10:04:55",s:"SASA",d:"SELL",y:"LIMIT",q:"3.000",p:"39,20",st:"cancelled",f:"0",c:0}];
+const POS=[{s:"GARAN",q:"1.000",a:"125,00",l:"125,30",p:"+300",pr:"1.000",r:"%0,24",u:1},{s:"THYAO",q:"2.400",a:"302,10",l:"302,50",p:"+960",pr:"1.200",r:"%0,13",u:1},
+{s:"ASELS",q:"800",a:"53,90",l:"54,20",p:"+240",pr:"0",r:"%0,56",u:1},{s:"EREGL",q:"5.000",a:"44,60",l:"44,12",p:"−2.400",pr:"5.000",r:"−%1,08",u:0}];
+const FILLS=[{t:"14:22:07",s:"GARAN",d:"BUY",q:"1.000",p:"125,00",fee:"31,25"},{t:"13:58:40",s:"THYAO",d:"BUY",q:"1.200",p:"302,05",fee:"90,62"},
+{t:"13:52:18",s:"THYAO",d:"BUY",q:"1.200",p:"302,15",fee:"90,65"},{t:"11:30:12",s:"ASELS",d:"BUY",q:"800",p:"53,90",fee:"10,78"}];
+const RISK=[{k:"Alım gücü",v:"₺642.000",st:"ok"},{k:"Açık pozisyon değeri",v:"₺1.140.320",st:"ok"},{k:"Günlük P/K limiti",v:"−₺50.000 / kullanılan ₺0",st:"ok"},
+{k:"Fat-finger sapma",v:"%20 tavan",st:"ok"},{k:"Sembol konsantrasyon (GARAN)",v:"%11 / %25",st:"ok"},{k:"Açığa satış",v:"kapalı",st:"warn"}];
+const SN={filled:"DOLDU",working:"BORSADA",pending:"TETİK BEKLİYOR",cancelled:"İPTAL",partial:"KISMİ"};
+const sd=s=>`<span class="${s==='BUY'?'sb':'ss'}">${s==='BUY'?'AL':'SAT'}</span>`;
+function renderBlot(tab){const el=document.getElementById("blotter");
+  if(tab==="orders")el.innerHTML=`<table><thead><tr><th>Saat</th><th>Sembol</th><th>Yön</th><th>Tip</th><th class="num">Miktar</th><th class="num">Fiyat</th><th class="num">Doldu</th><th>Durum</th></tr></thead><tbody>${ORD.map(o=>`<tr class="${o.c?'child':''}"><td class="mono">${o.t}</td><td>${o.s}</td><td>${sd(o.d)}</td><td>${o.y}</td><td class="num">${o.q}</td><td class="num">${o.p}</td><td class="num">${o.f}</td><td><span class="pill ${o.st}">${SN[o.st]}</span></td></tr>`).join("")}</tbody></table>`;
+  else if(tab==="positions")el.innerHTML=`<table><thead><tr><th>Sembol</th><th class="num">Miktar</th><th class="num">Ort. Maliyet</th><th class="num">Son</th><th class="num">K/Z ₺</th><th class="num">Getiri</th><th class="num">Korumalı</th></tr></thead><tbody>${POS.map(p=>`<tr><td>${p.s}</td><td class="num">${p.q}</td><td class="num">${p.a}</td><td class="num">${p.l}</td><td class="num ${p.u?'up':'down'}">${p.p}</td><td class="num ${p.u?'up':'down'}">${p.r}</td><td class="num">${p.pr}</td></tr>`).join("")}</tbody></table>`;
+  else if(tab==="fills")el.innerHTML=`<table><thead><tr><th>Saat</th><th>Sembol</th><th>Yön</th><th class="num">Miktar</th><th class="num">Fiyat</th><th class="num">Komisyon</th></tr></thead><tbody>${FILLS.map(f=>`<tr><td class="mono">${f.t}</td><td>${f.s}</td><td>${sd(f.d)}</td><td class="num">${f.q}</td><td class="num">${f.p}</td><td class="num">₺${f.fee}</td></tr>`).join("")}</tbody></table>`;
+  else el.innerHTML=`<table><thead><tr><th>Kontrol</th><th class="num">Değer / Limit</th><th>Durum</th></tr></thead><tbody>${RISK.map(x=>`<tr><td>${x.k}</td><td class="num">${x.v}</td><td><span class="pill ${x.st==='ok'?'filled':'pending'}">${x.st==='ok'?'OK':'DİKKAT'}</span></td></tr>`).join("")}</tbody></table>`;}
+document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>{document.querySelectorAll(".tabs button").forEach(x=>x.classList.remove("on"));b.classList.add("on");renderBlot(b.dataset.tab);});
+document.querySelectorAll("#tf button,.ctool .g button").forEach(b=>b.onclick=function(){const sib=this.parentElement.querySelectorAll("button");if(this.classList.contains("ind")){this.classList.toggle("on");return;}sib.forEach(x=>x.classList.remove("on"));this.classList.add("on");});
+document.querySelectorAll(".mtabs button,.tabbar div").forEach(b=>b.onclick=()=>toast("Mobil sekme (demo)"));
+
+// ticket
+function setSide(s){side=s;sB.classList.toggle("on",s==="BUY");sS.classList.toggle("on",s==="SELL");upd();}
+function setQty(f){const i=SYMBOLS.find(x=>x.sym===active);qty.value=Math.round(642000*f/i.px/10)*10;upd();}
+document.querySelectorAll("#modes button").forEach(b=>b.onclick=()=>{mode=b.dataset.mode;document.querySelectorAll("#modes button").forEach(x=>x.classList.remove("on"));b.classList.add("on");adv.classList.toggle("hidden",mode==="simple");upd();});
+["qty","price","otype","tif","tp","sl"].forEach(id=>document.getElementById(id).addEventListener("input",upd));
+function upd(){const q=parseFloat((qty.value+"").replace(/\./g,"").replace(",","."))||0,p=parseFloat((price.value+"").replace(",","."))||0;
+  submit.className="submit "+(side==="BUY"?"buy":"sell");
+  submit.textContent=`${side==="BUY"?"AL":"SAT"} · ${active} ${q.toLocaleString("tr-TR")} @ ${price.value}${mode==="bracket"?" (TP/SL)":""}`;
+  notional.textContent="₺"+(q*p).toLocaleString("tr-TR",{maximumFractionDigits:0});
+  if(mode!=="simple"){const tpv=parseFloat((tp.value+"").replace(",","."))||0,slv=parseFloat((sl.value+"").replace(",","."))||0,rk=Math.abs(p-slv);rr.textContent=rk>0?`1 : ${(Math.abs(tpv-p)/rk).toFixed(1)}`:"—";}}
+function toast(m){const t=document.getElementById("toast");t.textContent=m;t.classList.add("show");clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove("show"),2400);}
+setInterval(()=>{const d=new Date();document.getElementById("clock").textContent=d.toLocaleTimeString("tr-TR");},1000);
+
+renderWL();loadD("GARAN");loadM();renderDOM();renderBlot("orders");upd();
+
+// ================= FUND COPILOT =================
+const FUNDS=[
+ {k:"SPH",n:"Şeker Portföy Hisse",sc:8.4,r:42.1,v:24.3},
+ {k:"AFT",n:"Ak Portföy Yeni Teknolojiler",sc:7.9,r:55.2,v:31.0},
+ {k:"IPB",n:"İş Portföy BIST Banka",sc:7.2,r:38.4,v:22.1},
+ {k:"YAS",n:"YKB Portföy Serbest",sc:7.0,r:40.0,v:20.0},
+ {k:"GAF",n:"Garanti Portföy Altın",sc:6.8,r:31.2,v:18.5},
+ {k:"QNH",n:"QNB Finans Portföy Hisse",sc:6.5,r:36.1,v:23.0},
+ {k:"TCD",n:"TEB Portföy Para Piyasası",sc:6.1,r:48.9,v:3.2}];
+const FCOL={SPH:"#2dd4bf",AFT:"#57b6ff",IPB:"#e0a53b",YAS:"#26a69a",GAF:"#b98cff",QNH:"#ef8f5a",TCD:"#7fd1a8"};
+const PROFILES={
+ temkinli:{w:{TCD:40,GAF:20,IPB:14,SPH:12,YAS:9,AFT:5},vol:8.1,cvar:3.9,dd:6.2,hhi:0.24,
+   lt:{BIST:30,"Altın":20,"Para piy.":44,"Yabancı":6},
+   why:"Temkinli profilde sermaye korunması önce gelir. HRP kümelemesi ağırlığı para piyasası (TCD %40) ve altına (GAF %20) kaydırdı; hisse maruziyeti sınırlı tutuldu. CVaR %4'ün altında, maksimum düşüş ~%6."},
+ dengeli:{w:{SPH:22,IPB:18,TCD:20,GAF:16,YAS:14,AFT:10},vol:14.2,cvar:6.8,dd:11.3,hhi:0.18,
+   lt:{BIST:58,"Altın":16,"Para piy.":20,"Yabancı":6},
+   why:"Dengeli profilin için HRP riski 6 fona dağıttı. CVaR %8 bütçesini aşmamak için para piyasası (TCD) %20'de tutuldu; altın (GAF) kur/enflasyon hedge'i olarak eklendi. Şeker Portföy Hisse (SPH) yüksek Sharpe'ı nedeniyle en yüksek ağırlıkta."},
+ agresif:{w:{AFT:26,SPH:24,QNH:16,IPB:14,YAS:12,GAF:8},vol:22.6,cvar:11.4,dd:19.8,hhi:0.19,
+   lt:{BIST:70,"Altın":8,"Para piy.":8,"Yabancı":14},
+   why:"Agresif profilde büyüme önceliği: teknoloji (AFT %26) ve hisse fonları ağırlıkta. Yüksek CVaR (%11,4) bilinçli olarak kabul edildi; altın küçük bir hedge olarak korundu."}};
+const LTCOL={BIST:"#2dd4bf","Altın":"#e0a53b","Para piy.":"#7fd1a8","Yabancı":"#57b6ff"};
+const STRESS=[["2018 kur şoku","−%12,4"],["2020 Mart (Covid)","−%18,1"],["Faiz +500bp","−%4,2"],["BIST −%10 gün","−%6,8"]];
+let profile="dengeli";
+
+function renderFunds(){
+  document.getElementById("fundList").innerHTML=`<table><thead><tr><th>Kod</th><th>Fon</th><th class="num">Skor</th><th class="num">Yıllık</th><th class="num">Vol</th></tr></thead><tbody>${
+   FUNDS.map(f=>`<tr><td style="color:${FCOL[f.k]};font-weight:600">${f.k}</td><td style="font-size:10.5px">${f.n}<div class="wbar"><i style="width:${f.sc*10}%"></i></div></td>
+   <td class="num">${f.sc.toFixed(1)}</td><td class="num up">%${fmt(f.r,1)}</td><td class="num">%${fmt(f.v,1)}</td></tr>`).join("")}</tbody></table>`;
+}
+function arc(cx,cy,r,ir,a1,a2){const d=a=>a*Math.PI/180;const x1=cx+r*Math.cos(d(a1)),y1=cy+r*Math.sin(d(a1)),x2=cx+r*Math.cos(d(a2)),y2=cy+r*Math.sin(d(a2));
+  const xi2=cx+ir*Math.cos(d(a2)),yi2=cy+ir*Math.sin(d(a2)),xi1=cx+ir*Math.cos(d(a1)),yi1=cy+ir*Math.sin(d(a1));const lg=(a2-a1)>180?1:0;
+  return `M${x1} ${y1} A${r} ${r} 0 ${lg} 1 ${x2} ${y2} L${xi2} ${yi2} A${ir} ${ir} 0 ${lg} 0 ${xi1} ${yi1} Z`;}
+function svgDonut(w){const keys=Object.keys(w),tot=keys.reduce((a,k)=>a+w[k],0);let ang=-90,g="";
+  keys.forEach(k=>{const a2=ang+w[k]/tot*360;g+=`<path d="${arc(90,90,68,44,ang,a2)}" fill="${FCOL[k]}"/>`;ang=a2;});
+  g+=`<text x="90" y="86" text-anchor="middle" fill="#8b98a5" font-size="10" font-family="IBM Plex Mono">HRP+CVaR</text>
+  <text x="90" y="102" text-anchor="middle" fill="#e6edf3" font-size="13" font-weight="700" font-family="IBM Plex Mono">${keys.length} fon</text>`;
+  return `<svg viewBox="0 0 180 180" style="width:172px;height:172px">${g}</svg>`;}
+function renderAlloc(){
+  const P=PROFILES[profile],w=P.w,keys=Object.keys(w);
+  document.getElementById("donut").innerHTML=svgDonut(w);
+  document.getElementById("alegend").innerHTML=keys.map(k=>`<div><span class="sw" style="background:${FCOL[k]}"></span><span>${k} · ${FUNDS.find(f=>f.k===k).n}</span><span class="pc">%${w[k]}</span></div>`).join("");
+  document.getElementById("doctor").innerHTML=
+   `<div class="tile"><div class="k">Yıllık Vol</div><div class="v">%${fmt(P.vol,1)}</div></div>
+    <div class="tile"><div class="k">CVaR 95</div><div class="v down">%${fmt(P.cvar,1)}</div></div>
+    <div class="tile"><div class="k">Maks Düşüş</div><div class="v">%${fmt(P.dd,1)}</div></div>
+    <div class="tile"><div class="k">Konsantr. HHI</div><div class="v">${P.hhi.toFixed(2)}</div></div>
+    <div class="tile"><div class="k">Fon Sayısı</div><div class="v">${keys.length}</div></div>
+    <div class="tile"><div class="k">Sharpe (ort)</div><div class="v">1,4</div></div>`;
+  document.getElementById("ltbar").innerHTML=Object.keys(P.lt).map(k=>`<i style="width:${P.lt[k]}%;background:${LTCOL[k]}"></i>`).join("");
+  document.getElementById("ltleg").innerHTML=Object.keys(P.lt).map(k=>`<span><span class="sw" style="background:${LTCOL[k]}"></span>${k} %${P.lt[k]}</span>`).join("");
+  document.getElementById("stress").innerHTML=STRESS.map(s=>`<div class="r"><span>${s[0]}</span><span class="mono down">${s[1]}</span></div>`).join("");
+  const okc=P.cvar<=8;
+  document.getElementById("flags").innerHTML=
+   `<div class="flag"><b>✓</b> CVaR bütçe içinde (%${fmt(P.cvar,1)} ${okc?'≤':'>'} %8)</div>
+    <div class="flag"><b>✓</b> Konsantrasyon düşük (HHI ${P.hhi.toFixed(2)})</div>
+    <div class="flag"><b>✓</b> Look-through likidite yeterli</div>`;
+  document.getElementById("whyText").textContent=P.why;
+}
+function setProfile(p){profile=p;document.querySelectorAll("#rpf button").forEach(b=>b.classList.toggle("on",b.dataset.p===p));renderAlloc();}
+document.querySelectorAll("#rpf button").forEach(b=>b.onclick=()=>setProfile(b.dataset.p));
+renderFunds();renderAlloc();
+</script>
+
+</body></html>
