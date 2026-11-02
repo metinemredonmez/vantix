@@ -16,7 +16,7 @@
     "@nestjs/platform-fastify": "^10.4.0",
     "@nestjs/websockets": "^10.4.0",
     "@nestjs/platform-ws": "^10.4.0",
-    "@nestjs/microservices": "^10.4.0",
+    "@nestjs/microservices": "^11.1.19",
     "nats": "^2.28.0",
     "ioredis": "^5.4.1",
     "prisma": "^5.20.0",
